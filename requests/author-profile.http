@@ -1,0 +1,27 @@
+### NOTE: Deprecated — the `/api/admin/profil` endpoints have been removed. Use `/api/admin/profile` existing admin endpoint instead.
+
+### Update admin profile (email, biographie, photo, réseaux sociaux)
+PUT http://localhost:5000/api/admin/profile
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: multipart/form-data; boundary=---011000010111000001101001
+
+---011000010111000001101001
+Content-Disposition: form-data; name="biographie"
+
+Biographie test
+---011000010111000001101001
+Content-Disposition: form-data; name="socials"
+
+[{"network":"twitter","url":"https://twitter.com/author"},{"network":"github","url":"https://github.com/author"}]
+---011000010111000001101001
+Content-Disposition: form-data; name="image"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+< ./public/images/default_image_actus.png
+---011000010111000001101001
+Content-Disposition: form-data; name="currentPassword"
+
+currentpassword123
+---011000010111000001101001--
+
+### Delete admin profile photo (handled by updating with no image and clearing public id manually via DB or implement dedicated route separately)
