@@ -1,10 +1,12 @@
 {
-  "name": "investissement",
+  "name": "reportflow-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Backend API pour l'application ReportFlow - Collecte, validation et génération automatisée de rapports journaliers",
+  "main": "server.js",
   "scripts": {
-    "start": "nodemon app",
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "seed:admin": "node scripts/seedAdmin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

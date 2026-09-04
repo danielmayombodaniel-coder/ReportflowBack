@@ -1,0 +1,26 @@
+import { Router } from 'express';
+import {
+	detail,
+	list,
+	requestCorrection,
+	statistics,
+	validate,
+} from '../controllers/controllerResponsableController.js';
+import { getToday, submitToday, updateToday } from '../controllers/controllerAgentController.js';
+import { optionalAuth } from '../middleware/optionalAuth.js';
+
+const router = Router();
+const reportPath = '/agent/rapport-du-jour';
+const responsableMiddleware = [];
+
+router.get(reportPath, optionalAuth, getToday);
+router.put(reportPath, optionalAuth, updateToday);
+router.post(`${reportPath}/soumettre`, optionalAuth, submitToday);
+
+router.get('/responsable/rapports', ...responsableMiddleware, list);
+router.get('/responsable/rapports/:id', ...responsableMiddleware, detail);
+router.post('/responsable/rapports/:id/valider', ...responsableMiddleware, validate);
+router.post('/responsable/rapports/:id/demander-correction', ...responsableMiddleware, requestCorrection);
+router.get('/responsable/statistiques', ...responsableMiddleware, statistics);
+
+export default router;

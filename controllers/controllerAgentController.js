@@ -1,0 +1,22 @@
+import ControllerReport from '../models/ControllerReport.js';
+import { controllerReportSchema } from '../validators/reportValidators.js';
+import { createReportController } from '../services/reportControllerFactory.js';
+
+const controller = createReportController({
+    Model: ControllerReport,
+    schema: controllerReportSchema,
+    empty: {
+        dossiersAssignes: 0,
+        dossiersControles: 0,
+        dossiersEnAttente: 0,
+        remarques: '',
+        dataEntryPersons: [],
+        frequentErrors: [],
+    },
+    meaningfulFields: ['dossiersAssignes', 'dossiersControles', 'dossiersEnAttente', 'remarques', 'dataEntryPersons', 'frequentErrors'],
+    allowedProfiles: ['controleur_agent'],
+});
+
+export const getToday = controller.getToday;
+export const updateToday = controller.updateToday;
+export const submitToday = controller.submitToday;
