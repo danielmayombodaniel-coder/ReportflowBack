@@ -19,6 +19,7 @@ const controller = createResponsableController({
 
 export const list = controller.list;
 export const detail = controller.detail;
+export const update = controller.update;
 export const validate = controller.validate;
 export const requestCorrection = controller.requestCorrection;
 export const statistics = controller.statistics;

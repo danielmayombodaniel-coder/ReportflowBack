@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import { getTodayReportDate } from './reportDateUtils.js';
+import logger from '../utils/logger.js';
 
 const EDITABLE_STATUSES = ['draft', 'needs_correction'];
 const FINAL_STATUSES = ['submitted', 'validated'];
@@ -7,6 +8,7 @@ const FINAL_STATUSES = ['submitted', 'validated'];
 const sendValidationError = (error, res) => {
     if (error?.name !== 'ZodError') return false;
 
+    logger.warn({ issues: error.issues }, 'Validation Zod échouée');
     res.status(400).json({
         message: 'Les données du rapport sont invalides',
         errors: error.issues.map((issue) => ({

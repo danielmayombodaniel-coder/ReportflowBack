@@ -24,6 +24,11 @@ export const createResponsableController = ({ Model, summary, totals, extraStats
         try {
             const range = getReportDateRange(req.query.date);
             const reports = await findReportsForDate(Model, range);
+            reports.sort((first, second) => {
+                const firstSubmittedAt = first.submittedAt ? new Date(first.submittedAt).getTime() : 0;
+                const secondSubmittedAt = second.submittedAt ? new Date(second.submittedAt).getTime() : 0;
+                return secondSubmittedAt - firstSubmittedAt || new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime();
+            });
             return res.status(200).json({
                 date: range.date,
                 reports: reports.map((report) => ({
@@ -31,6 +36,7 @@ export const createResponsableController = ({ Model, summary, totals, extraStats
                     submittedByName: report.submittedByName,
                     status: report.status,
                     reportDate: report.reportDate,
+                    submittedAt: report.submittedAt,
                     summary: summary(report),
                 })),
             });
@@ -103,6 +109,50 @@ export const createResponsableController = ({ Model, summary, totals, extraStats
                     errors: error.issues.map((issue) => ({ field: issue.path.join('.'), message: issue.message })),
                 });
             }
+            return sendError(res, error);
+        }
+    },
+
+    update: async (req, res) => {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(404).json({ message: 'Rapport introuvable' });
+        }
+
+        try {
+            const report = await Model.findById(req.params.id);
+            if (!report) return res.status(404).json({ message: 'Rapport introuvable' });
+
+            // Les responsables peuvent modifier n'importe quel rapport de leur service
+            // Quel que soit son statut (draft, submitted, needs_correction, validated)
+            
+            // Mettre à jour tous les champs du rapport avec les données reçues
+            // On exclut les champs protégés qui ne doivent pas être modifiés directement
+            const protectedFields = ['_id', 'id', '__v', 'createdAt', 'updatedAt', 'submittedBy', 'submittedAt'];
+            const updateData = { ...req.body };
+            
+            // Supprimer les champs protégés
+            protectedFields.forEach(field => {
+                delete updateData[field];
+            });
+
+            // Appliquer les modifications
+            Object.assign(report, updateData);
+            
+            // Si le rapport était en "needs_correction" et qu'on le modifie,
+            // on le remet en "submitted" pour indiquer qu'il est prêt à être revalidé
+            if (report.status === 'needs_correction') {
+                report.status = 'submitted';
+                report.correction = undefined; // Supprimer la demande de correction
+            }
+
+            // Enregistrer les modifications
+            await report.save();
+            
+            return res.status(200).json({ 
+                message: 'Rapport modifié avec succès',
+                report 
+            });
+        } catch (error) {
             return sendError(res, error);
         }
     },

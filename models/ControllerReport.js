@@ -36,6 +36,7 @@ const controllerReportSchema = configureBaseReportSchema(new mongoose.Schema({
     dossiersControles: { type: Number, min: 0, default: 0 },
     dossiersEnAttente: { type: Number, min: 0, default: 0 },
     remarques: { type: String, trim: true },
+    observations: { type: String, trim: true },
     dataEntryPersons: [{
         nom: { type: String, required: true, trim: true },
         zone: { type: String, required: true, trim: true },
