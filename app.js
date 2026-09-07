@@ -14,12 +14,16 @@ import unifiedReportRoutes from './routes/unifiedReportRoutes.js';
 const app = express();
 app.use(helmet());
 
-// Configuration CORS permissive pour le développement
-// À restreindre pour la production
+// Configuration CORS
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:3000']
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
 app.use(cors({
-  origin: '*', // Permettre toutes les origines en développement
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 app.use(cookieParser());
 app.use('/static', express.static(path.join(process.cwd(), 'public')));
