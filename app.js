@@ -9,6 +9,7 @@ import controllerRoutes from './routes/controllerRoutes.js';
 import dataEntryRoutes from './routes/dataEntryRoutes.js';
 import individualReportRoutes from './routes/individualReportRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import unifiedReportRoutes from './routes/unifiedReportRoutes.js';
 
 const app = express();
 app.use(helmet());
@@ -31,6 +32,7 @@ app.use('/api/controleur', controllerRoutes);
 app.use('/api/operateur-saisie', dataEntryRoutes);
 app.use('/api/rapport-individuel', individualReportRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/rapport-unifie', unifiedReportRoutes);
 
 // Route de santé pour vérifier que l'API fonctionne
 app.get('/api/health', (req, res) => {
