@@ -30,7 +30,6 @@ export const supportClientReportSchema = z.object({
         enCours: nonNegativeNumber,
         saisis: nonNegativeNumber,
     }).optional(),
-    defisRencontres: optionalText,
     observations: optionalText,
 });
 
@@ -58,10 +57,6 @@ export const dataEntryOperatorReportSchema = z.object({
 
 export const individualReportSchema = z.object({
     submittedByName,
-    title: z.string().trim().min(1, 'Le titre ne peut pas être vide'),
+    title: z.string().trim().min(1, 'Le titre ne peut pas etre vide'),
     activitesRealisees: optionalText,
-    tachesEffectuees: optionalText,
-    problemesRencontres: optionalText,
-    observations: optionalText,
-    autresInformations: optionalText,
 });

@@ -2,6 +2,34 @@ import { buildReportDataForDate } from '../services/unifiedReportDataBuilder.js'
 import { generateUnifiedReport } from '../services/unifiedReportGenerator.js';
 
 /**
+ * Recalcule les totaux pour un service après filtrage des agents
+ */
+function recalculateTotals(data, service) {
+    if (!data[service]?.agents || data[service].agents.length === 0) {
+        return;
+    }
+
+    const agents = data[service].agents;
+    
+    if (service === 'supportClient') {
+        data[service].mailsTotal = agents.reduce((sum, a) => sum + (a.demandes || 0) + (a.questions || 0) + (a.mailsTraites || 0) + (a.attente || 0), 0);
+        data[service].demandesSouscription = agents.reduce((sum, a) => sum + (a.demandes || 0), 0);
+        data[service].questionsDiverses = agents.reduce((sum, a) => sum + (a.questions || 0), 0);
+        data[service].mailsTraites = agents.reduce((sum, a) => sum + (a.mailsTraites || 0), 0);
+        data[service].attenteRegularisation = agents.reduce((sum, a) => sum + (a.attente || 0), 0);
+        data[service].dossiersAssignesTotal = agents.reduce((sum, a) => sum + (a.assignes || 0), 0);
+        data[service].dossiersEnCours = agents.reduce((sum, a) => sum + (a.enCours || 0), 0);
+        data[service].dossiersSaisis = agents.reduce((sum, a) => sum + (a.saisis || 0), 0);
+    }
+    
+    if (service === 'operateurSaisie') {
+        data[service].dossiersRecus = agents.reduce((sum, a) => sum + (a.recus || 0), 0);
+        data[service].dossiersTraites = agents.reduce((sum, a) => sum + (a.traites || 0), 0);
+        data[service].dossiersRestants = agents.reduce((sum, a) => sum + (a.restants || 0), 0);
+    }
+}
+
+/**
  * Génère et télécharge le rapport unifié pour une date donnée
  *
  * @param {import('express').Request} req
@@ -11,9 +39,36 @@ import { generateUnifiedReport } from '../services/unifiedReportGenerator.js';
 export const generateUnifiedReportForDate = async (req, res) => {
     try {
         const { date } = req.query;
+        const { visibility } = req.body || {};
         
         // Construire les données pour la date demandée
         const reportData = await buildReportDataForDate(date);
+        
+        // Filtrer les agents selon la visibilité
+        if (visibility) {
+            if (visibility.supportClient && Array.isArray(visibility.supportClient) && reportData.supportClient.agents) {
+                reportData.supportClient.agents = reportData.supportClient.agents.filter((_, index) => 
+                    visibility.supportClient[index] !== false
+                );
+                recalculateTotals(reportData, 'supportClient');
+            }
+            if (visibility.controleur && Array.isArray(visibility.controleur) && reportData.controleur.agents) {
+                reportData.controleur.agents = reportData.controleur.agents.filter((_, index) => 
+                    visibility.controleur[index] !== false
+                );
+            }
+            if (visibility.operateurSaisie && Array.isArray(visibility.operateurSaisie) && reportData.operateurSaisie.agents) {
+                reportData.operateurSaisie.agents = reportData.operateurSaisie.agents.filter((_, index) => 
+                    visibility.operateurSaisie[index] !== false
+                );
+                recalculateTotals(reportData, 'operateurSaisie');
+            }
+            if (visibility.rapportsIndividuels && Array.isArray(visibility.rapportsIndividuels) && reportData.rapportsIndividuels) {
+                reportData.rapportsIndividuels = reportData.rapportsIndividuels.filter((_, index) => 
+                    visibility.rapportsIndividuels[index] !== false
+                );
+            }
+        }
         
         // Générer le document Word
         const docxBuffer = await generateUnifiedReport(reportData);

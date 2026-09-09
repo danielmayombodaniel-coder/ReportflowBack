@@ -179,10 +179,6 @@ function buildSupportClientSection(sc) {
     dossiersTable,
     subLabel('Détail des activités par Agent :'),
     new Table({ width: { size: 10400, type: WidthType.DXA }, columnWidths: agentCols, rows: [agentHeader, ...agentRows] }),
-    subLabel('3. DÉFIS RENCONTRÉS'),
-    bodyText(sc.defisRencontres || 'Aucun.', { bold: true }),
-    subLabel('4. OBSERVATIONS'),
-    bodyText(sc.observations || 'Aucune.'),
   );
 
   return children;
@@ -291,10 +287,6 @@ function buildOperateurSection(op, numeral) {
     ],
   }));
   children.push(new Table({ width: { size: 10400, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows] }));
-  if (op.observations) {
-    children.push(subLabel('Observations'));
-    children.push(bodyText(op.observations));
-  }
   return children;
 }
 

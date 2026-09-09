@@ -5,12 +5,13 @@ const router = express.Router();
 
 /**
  * Route PUBLIQUE pour générer et télécharger le rapport unifié
- * GET /api/rapport-unifie?date=YYYY-MM-DD
+ * POST /api/rapport-unifie?date=YYYY-MM-DD
  * 
  * Cette route est accessible sans authentification
  * Si la date n'est pas fournie, utilise aujourd'hui par défaut
+ * Accepte un corps JSON avec reportVisibility pour filtrer les rapports individuels
  */
-router.get('/', generateUnifiedReportForDate);
+router.post('/', generateUnifiedReportForDate);
 
 /**
  * Route PUBLIQUE pour récupérer les données JSON du rapport unifié

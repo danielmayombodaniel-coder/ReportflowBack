@@ -101,11 +101,7 @@ function buildIndividualReportsData(reports) {
         titre: `${r.title} - ${r.submittedByName || 'Inconnu'}`,
         note: 'rapport individuel',
         contenu: [
-            r.activitesRealisees ? `Activités réalisées : ${r.activitesRealisees}` : '',
-            r.tachesEffectuees ? `Tâches effectuées : ${r.tachesEffectuees}` : '',
-            r.problemesRencontres ? `Problèmes rencontrés : ${r.problemesRencontres}` : '',
-            r.observations ? `Observations : ${r.observations}` : '',
-            r.autresInformations ? `Autres informations : ${r.autresInformations}` : ''
+            r.activitesRealisees ? `Activités réalisées : ${r.activitesRealisees}` : ''
         ].filter(line => line && line.length > 0).join('\n')
     }));
 }
