@@ -67,14 +67,14 @@ function buildSupportClientData(reports) {
         saisis: r.dossiers?.saisis || 0
     }));
 
-    // Concaténer les défis et observations
+    // Concaténer les défis et observations du responsable
     const defisList = validatedReports
         .map(r => r.defisRencontres?.trim())
         .filter(text => text && text.length > 0);
     const defisRencontres = defisList.length > 0 ? defisList.join('; ') : '';
 
     const observationsList = validatedReports
-        .map(r => r.observations?.trim())
+        .map(r => r.observationsResponsable?.trim())
         .filter(text => text && text.length > 0);
     const observations = observationsList.length > 0 ? observationsList.join('; ') : '';
 

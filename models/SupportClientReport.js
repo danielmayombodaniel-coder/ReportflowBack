@@ -21,7 +21,8 @@ const supportClientReportSchema = configureBaseReportSchema(new mongoose.Schema(
         saisis: { type: Number, min: 0, default: 0 },
     },
     defisRencontres: { type: String, trim: true },
-    observations: { type: String, trim: true },
+    observations: { type: String, trim: true }, // Champ existant pour les agents (sera caché dans le formulaire)
+    observationsResponsable: { type: String, trim: true }, // Nouveau champ spécifique au responsable
 }));
 
 const SupportClientReport = mongoose.model(

@@ -181,6 +181,18 @@ function buildSupportClientSection(sc) {
     new Table({ width: { size: 10400, type: WidthType.DXA }, columnWidths: agentCols, rows: [agentHeader, ...agentRows] }),
   );
 
+  // Ajouter les nouvelles sous-sections pour le responsable
+  if (sc.defisRencontres || sc.observationsResponsable) {
+    if (sc.defisRencontres) {
+      children.push(subLabel('3. Défis rencontrés'));
+      children.push(multilineBody(sc.defisRencontres));
+    }
+    if (sc.observationsResponsable) {
+      children.push(subLabel('4. Observations'));
+      children.push(multilineBody(sc.observationsResponsable));
+    }
+  }
+
   return children;
 }
 
