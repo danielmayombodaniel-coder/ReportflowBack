@@ -38,7 +38,6 @@ export const controllerReportSchema = z.object({
     dossiersAssignes: nonNegativeNumber,
     dossiersControles: nonNegativeNumber,
     dossiersEnAttente: nonNegativeNumber,
-    remarques: optionalText,
     observations: optionalText,
     dataEntryPersons: z.array(z.object({
         nom: z.string().trim(),

@@ -13,10 +13,8 @@ const controller = createReportController({
             dossiersEnAttenteRegularisation: 0,
         },
         dossiers: { assignes: 0, enCours: 0, saisis: 0 },
-        defisRencontres: '',
-        observations: '',
     },
-    meaningfulFields: ['mails', 'dossiers', 'defisRencontres', 'observations'],
+    meaningfulFields: ['mails', 'dossiers'],
     allowedProfiles: ['support_client_agent'],
 });
 

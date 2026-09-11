@@ -9,12 +9,11 @@ const controller = createReportController({
         dossiersAssignes: 0,
         dossiersControles: 0,
         dossiersEnAttente: 0,
-        remarques: '',
         observations: '',
         dataEntryPersons: [],
         frequentErrors: [],
     },
-    meaningfulFields: ['dossiersAssignes', 'dossiersControles', 'dossiersEnAttente', 'remarques', 'observations', 'dataEntryPersons', 'frequentErrors'],
+    meaningfulFields: ['dossiersAssignes', 'dossiersControles', 'dossiersEnAttente', 'observations', 'dataEntryPersons', 'frequentErrors'],
     allowedProfiles: ['controleur_agent'],
 });
 

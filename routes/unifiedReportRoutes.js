@@ -1,5 +1,7 @@
 import express from 'express';
 import { generateUnifiedReportForDate, getUnifiedReportData } from '../controllers/unifiedReportController.js';
+import { getDailyReportNotes, updateDailyReportNotes } from '../controllers/dailyReportNotesController.js';
+import { optionalAuth } from '../middleware/optionalAuth.js';
 
 const router = express.Router();
 
@@ -21,5 +23,8 @@ router.post('/', generateUnifiedReportForDate);
  * Retourne les données structurées pour affichage dans l'interface
  */
 router.get('/data', getUnifiedReportData);
+
+router.get('/notes', optionalAuth, getDailyReportNotes);
+router.put('/notes', optionalAuth, updateDailyReportNotes);
 
 export default router;

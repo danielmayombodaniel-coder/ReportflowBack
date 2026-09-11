@@ -75,19 +75,19 @@ const data = {
     title: "Contrôleur — Kinshasa",
     agents: [
       { heure: "15:56", nom: "Elie MUNANGA", assignes: 50, controles: 46, enAttente: 4, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
-        remarque: "Remarque : comme les jours précédents, un problème de connexion a de nouveau été rencontré, ce qui n'a pas permis au contrôleur de bien évoluer et d'atteindre sa target du jour." },
+        observation: "Observation : comme les jours précédents, un problème de connexion a de nouveau été rencontré, ce qui n'a pas permis au contrôleur de bien évoluer et d'atteindre sa target du jour." },
       { heure: "16:03", nom: "Eliakim Mokemo", assignes: 50, controles: 50, enAttente: 26, etaAnterieure: 1, sansDeclaration: 0, sansPieces: 0, valides: 0,
-        remarque: "Erreurs fréquentes : problèmes liés au mode de conditionnement (poids BRUT, NET et CBM), à l'identification de la marchandise (HS, IMO, colis, emballage), aux valeurs (Fret, FOB, assurance, Incoterm) et à l'expédition (embarquement, lieu de départ, arrivée, ETA, ETD, transitaire).\nRemarque : les agents de Mombassa commettent encore trop d'erreurs dans le conditionnement." },
+        observation: "Erreurs fréquentes : problèmes liés au mode de conditionnement (poids BRUT, NET et CBM), à l'identification de la marchandise (HS, IMO, colis, emballage), aux valeurs (Fret, FOB, assurance, Incoterm) et à l'expédition (embarquement, lieu de départ, arrivée, ETA, ETD, transitaire).\nObservation : les agents de Mombassa commettent encore trop d'erreurs dans le conditionnement." },
       { heure: "16:10", nom: "Daniel LUBANGULA", assignes: 50, controles: 50, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
-        remarque: "Remarque : au cours de la journée, 50 dossiers ont été contrôlés. Les principales anomalies relevées concernent les erreurs sur les valeurs FOB, FRET et BAF, les factures de fret non jointes, les surcharges non renseignées, ainsi que l'absence ou l'insuffisance de description des marchandises." },
+        observation: "Observation : au cours de la journée, 50 dossiers ont été contrôlés. Les principales anomalies relevées concernent les erreurs sur les valeurs FOB, FRET et BAF, les factures de fret non jointes, les surcharges non renseignées, ainsi que l'absence ou l'insuffisance de description des marchandises." },
       { heure: "16:13", nom: "Honoré NGBOTO", assignes: 50, controles: 36, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 1,
-        remarque: "Saisisseurs / zones : petits correctifs apportés sur les frais additionnels des dossiers saisis par Hans Michaela, Purity MUTHONI et AGINGA Linet.\nErreurs fréquentes : problèmes liés au mode de conditionnement (poids BRUT, NET et CBM) et aux valeurs (Fret, FOB, assurance, Incoterm)." },
+        observation: "Saisisseurs / zones : petits correctifs apportés sur les frais additionnels des dossiers saisis par Hans Michaela, Purity MUTHONI et AGINGA Linet.\nErreurs fréquentes : problèmes liés au mode de conditionnement (poids BRUT, NET et CBM) et aux valeurs (Fret, FOB, assurance, Incoterm)." },
       { heure: "16:30", nom: "ZOLA Glodi", assignes: 50, controles: 35, enAttente: 1, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
-        remarque: "Saisisseurs / zones : SHEILLA ARADI — Mombassa ; Purity MUTHONI — Mombassa ; Baartman MJ — Cape Town." },
+        observation: "Saisisseurs / zones : SHEILLA ARADI — Mombassa ; Purity MUTHONI — Mombassa ; Baartman MJ — Cape Town." },
       { heure: "16:32", nom: "Nathalis NGOMBO", assignes: 50, controles: 38, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 2,
-        remarque: "Remarque : problème de connexion rencontré. Plusieurs dossiers présentent des saisisseurs qui ne renseignent pas les autres surcharges." },
+        observation: "Observation : problème de connexion rencontré. Plusieurs dossiers présentent des saisisseurs qui ne renseignent pas les autres surcharges." },
       { heure: "17:08", nom: "Holly BOKAMBANDJA", assignes: 50, controles: 50, enAttente: 35, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 4,
-        remarque: "Résumé global : exportateur, frais additionnels, Incoterm, mauvais documents joints dans Synapta, pas de facture de fret dans Sygrem, fret de base, code HS et nom du navire / numéro de voyage." },
+        observation: "Résumé global : exportateur, frais additionnels, Incoterm, mauvais documents joints dans Synapta, pas de facture de fret dans Sygrem, fret de base, code HS et nom du navire / numéro de voyage." },
     ],
   },
 
@@ -275,7 +275,7 @@ function buildControleurSection(ctrl, numeral) {
       headerCell("Sans n° déclaration", cols[6]),
       headerCell("Sans pièces jointes", cols[7]),
       headerCell("Validés", cols[8]),
-      headerCell("Remarques", cols[9]),
+      headerCell("Observations", cols[9]),
     ],
   });
 
@@ -300,7 +300,7 @@ function buildControleurSection(ctrl, numeral) {
       dataCell(a.sansDeclaration, cols[6], { center: true }),
       dataCell(a.sansPieces, cols[7], { center: true }),
       dataCell(a.valides, cols[8], { center: true }),
-      dataCell([multilineBody(a.remarque || "")], cols[9]),
+      dataCell([multilineBody(a.observation || "")], cols[9]),
     ],
   }));
 

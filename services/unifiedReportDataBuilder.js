@@ -3,6 +3,7 @@ import SupportClientReport from '../models/SupportClientReport.js';
 import IndividualReport from '../models/IndividualReport.js';
 import ControllerReport from '../models/ControllerReport.js';
 import DataEntryOperatorReport from '../models/DataEntryOperatorReport.js';
+import DailyReportNotes from '../models/DailyReportNotes.js';
 
 /**
  * Formate une date en français (ex: "Vendredi 4 septembre 2026")
@@ -28,14 +29,16 @@ function formatDateInFrench(date) {
  * @param {Array} reports - Rapports validés de SupportClient
  * @returns {object}
  */
-function buildSupportClientData(reports) {
+function buildSupportClientData(reports, dailyNotes = {}) {
     const validatedReports = reports.filter(r => r.status === 'validated');
     
     if (validatedReports.length === 0) {
         return {
             title: 'Support Client - Kinshasa',
             hasData: false,
-            agents: []
+            agents: [],
+            defisRencontres: dailyNotes.defisRencontres || '',
+            observations: dailyNotes.observations || ''
         };
     }
 
@@ -67,24 +70,13 @@ function buildSupportClientData(reports) {
         saisis: r.dossiers?.saisis || 0
     }));
 
-    // Concaténer les défis et observations du responsable
-    const defisList = validatedReports
-        .map(r => r.defisRencontres?.trim())
-        .filter(text => text && text.length > 0);
-    const defisRencontres = defisList.length > 0 ? defisList.join('; ') : '';
-
-    const observationsList = validatedReports
-        .map(r => r.observationsResponsable?.trim())
-        .filter(text => text && text.length > 0);
-    const observations = observationsList.length > 0 ? observationsList.join('; ') : '';
-
     return {
         title: 'Support Client - Kinshasa',
         hasData: true,
         ...totals,
         agents,
-        defisRencontres,
-        observations
+        defisRencontres: dailyNotes.defisRencontres || '',
+        observations: dailyNotes.observations || ''
     };
 }
 
@@ -112,24 +104,25 @@ function buildIndividualReportsData(reports) {
  * @param {Array} reports - Rapports validés de ControllerReport
  * @returns {object}
  */
-function buildControleurData(reports) {
+function buildControleurData(reports, dailyNotes = {}) {
     const validatedReports = reports.filter(r => r.status === 'validated');
     
     if (validatedReports.length === 0) {
         return {
             title: 'Contrôleur — Kinshasa',
             hasData: false,
-            agents: []
+            agents: [],
+            observationResponsable: dailyNotes.observationsControleur || ''
         };
     }
 
     const agents = validatedReports.map(r => {
-        // Construire la remarque formatée
-        const remarqueParts = [];
+        // Construire l'observation de l'agent pour la colonne du rapport Word
+        const observationParts = [];
         
         if (r.dataEntryPersons && r.dataEntryPersons.length > 0) {
             const persons = r.dataEntryPersons.map(p => `${p.nom} (${p.zone})`).join(', ');
-            remarqueParts.push(`Saisisseurs / zones : ${persons}`);
+            observationParts.push(`Saisisseurs / zones : ${persons}`);
         }
         
         if (r.frequentErrors && r.frequentErrors.length > 0) {
@@ -138,14 +131,14 @@ function buildControleurData(reports) {
                 const dossiers = e.dossiers && e.dossiers.length > 0 ? ` (${e.dossiers.join(', ')})` : '';
                 return `${category}${dossiers}`;
             }).join(', ');
-            remarqueParts.push(`Erreurs fréquentes : ${errors}`);
+            observationParts.push(`Erreurs fréquentes : ${errors}`);
         }
         
-        if (r.remarques && r.remarques.trim()) {
-            remarqueParts.push(`Remarque : ${r.remarques.trim()}`);
+        if (r.observations && r.observations.trim()) {
+            observationParts.push(`Observation : ${r.observations.trim()}`);
         }
-        
-        const remarque = remarqueParts.join('\n');
+
+        const observation = observationParts.join('\n');
 
         // Extraire l'heure de soumission
         const heure = r.submittedAt ? new Date(r.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--:--';
@@ -160,14 +153,15 @@ function buildControleurData(reports) {
             sansDeclaration: 0, // Pas de champ correspondant dans le modèle
             sansPieces: 0, // Pas de champ correspondant dans le modèle
             valides: r.dossiersControles || 0, // Utiliser contrôlés comme validés
-            remarque
+            observation
         };
     });
 
     return {
         title: 'Contrôleur — Kinshasa',
         hasData: true,
-        agents
+        agents,
+        observationResponsable: dailyNotes.observationsControleur || ''
     };
 }
 
@@ -200,7 +194,8 @@ function buildOperateurData(reports) {
         nom: r.submittedByName || 'Inconnu',
         recus: r.dossiersRecus || 0,
         traites: r.dossiersTraites || 0,
-        restants: r.dossiersRestants || 0
+        restants: r.dossiersRestants || 0,
+        observation: r.observations?.trim() || ''
     }));
 
     // Concaténer les observations
@@ -228,18 +223,21 @@ export async function buildReportDataForDate(date) {
     const range = getReportDateRange(date);
     
     // Récupérer tous les rapports validés de la date
-    const [supportReports, individualReports, controllerReports, operatorReports] = await Promise.all([
+    const [supportReports, individualReports, controllerReports, operatorReports, dailyNotes] = await Promise.all([
         findReportsForDate(SupportClientReport, range),
         findReportsForDate(IndividualReport, range),
         findReportsForDate(ControllerReport, range),
-        findReportsForDate(DataEntryOperatorReport, range)
+        findReportsForDate(DataEntryOperatorReport, range),
+        DailyReportNotes.findOne({ reportDate: range.date })
     ]);
 
     return {
         dateLabel: formatDateInFrench(range.date),
-        supportClient: buildSupportClientData(supportReports),
+        introduction: dailyNotes?.introduction || '',
+        problemesTechniques: dailyNotes?.problemesTechniques || '',
+        supportClient: buildSupportClientData(supportReports, dailyNotes || {}),
         rapportsIndividuels: buildIndividualReportsData(individualReports),
-        controleur: buildControleurData(controllerReports),
+        controleur: buildControleurData(controllerReports, dailyNotes || {}),
         operateurSaisie: buildOperateurData(operatorReports)
     };
 }

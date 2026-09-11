@@ -113,6 +113,10 @@ function buildSupportClientSection(sc) {
   const children = [sectionTitle('I', sc.title || 'Support Client - Kinshasa')];
   if (!sc.hasData || !sc.agents || sc.agents.length === 0) {
     children.push(bodyText('Aucune donnée validée pour cette date.'));
+    children.push(subLabel('3. Défis rencontrés'));
+    children.push(multilineBody(sc.defisRencontres || ''));
+    children.push(subLabel('4. Observations'));
+    children.push(multilineBody(sc.observations || ''));
     return children;
   }
 
@@ -182,16 +186,10 @@ function buildSupportClientSection(sc) {
   );
 
   // Ajouter les nouvelles sous-sections pour le responsable
-  if (sc.defisRencontres || sc.observationsResponsable) {
-    if (sc.defisRencontres) {
-      children.push(subLabel('3. Défis rencontrés'));
-      children.push(multilineBody(sc.defisRencontres));
-    }
-    if (sc.observationsResponsable) {
-      children.push(subLabel('4. Observations'));
-      children.push(multilineBody(sc.observationsResponsable));
-    }
-  }
+  children.push(subLabel('3. Défis rencontrés'));
+  children.push(multilineBody(sc.defisRencontres || ''));
+  children.push(subLabel('4. Observations'));
+  children.push(multilineBody(sc.observations || ''));
 
   return children;
 }
@@ -211,7 +209,11 @@ function buildControleurSection(ctrl, numeral) {
   if (!ctrl.hasData || !ctrl.agents || ctrl.agents.length === 0) {
     return {
       heading: sectionTitle(numeral, titleText),
-      content: [bodyText('Aucune donnée validée pour cette date.')],
+      content: [
+        bodyText('Aucune donnée validée pour cette date.'),
+        subLabel('Observation'),
+        multilineBody(ctrl.observationResponsable || ''),
+      ],
     };
   }
 
@@ -227,7 +229,7 @@ function buildControleurSection(ctrl, numeral) {
       headerCell('Sans n° déclaration', cols[6]),
       headerCell('Sans pièces jointes', cols[7]),
       headerCell('Validés', cols[8]),
-      headerCell('Remarques', cols[9]),
+      headerCell('Observations', cols[9]),
     ],
   });
 
@@ -252,7 +254,7 @@ function buildControleurSection(ctrl, numeral) {
       dataCell(a.sansDeclaration ?? 0, cols[6], { center: true }),
       dataCell(a.sansPieces ?? 0, cols[7], { center: true }),
       dataCell(a.valides ?? 0, cols[8], { center: true }),
-      dataCell([multilineBody(a.remarque || '')], cols[9]),
+      dataCell([multilineBody(a.observation || '')], cols[9]),
     ],
   }));
 
@@ -273,7 +275,11 @@ function buildControleurSection(ctrl, numeral) {
 
   return {
     heading: sectionTitle(numeral, titleText),
-    content: [new Table({ width: { size: 13500, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] })],
+    content: [
+      new Table({ width: { size: 13500, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] }),
+      subLabel('Observation'),
+      multilineBody(ctrl.observationResponsable || ''),
+    ],
   };
 }
 
@@ -286,9 +292,9 @@ function buildOperateurSection(op, numeral) {
   children.push(subLabel('Activité du jour'));
   children.push(bodyText(`Dossiers reçus : ${op.dossiersRecus ?? 0}  |  Traités : ${op.dossiersTraites ?? 0}  |  Restants : ${op.dossiersRestants ?? 0}`, { bold: true }));
 
-  const cols = [3000, 2500, 2500, 2400];
+  const cols = [2300, 1800, 1800, 1800, 2700];
   const header = new TableRow({
-    children: [headerCell('Agent', cols[0]), headerCell('Dossiers reçus', cols[1]), headerCell('Dossiers traités', cols[2]), headerCell('Dossiers restants', cols[3])],
+    children: [headerCell('Agent', cols[0]), headerCell('Dossiers reçus', cols[1]), headerCell('Dossiers traités', cols[2]), headerCell('Dossiers restants', cols[3]), headerCell('Observations', cols[4])],
   });
   const rows = op.agents.map((a, i) => new TableRow({
     children: [
@@ -296,6 +302,7 @@ function buildOperateurSection(op, numeral) {
       dataCell(a.recus ?? 0, cols[1], { center: true, fill: i % 2 ? COLOR_BAND_FILL : undefined }),
       dataCell(a.traites ?? 0, cols[2], { center: true, fill: i % 2 ? COLOR_BAND_FILL : undefined }),
       dataCell(a.restants ?? 0, cols[3], { center: true, fill: i % 2 ? COLOR_BAND_FILL : undefined }),
+      dataCell([multilineBody(a.observation || '')], cols[4], { fill: i % 2 ? COLOR_BAND_FILL : undefined }),
     ],
   }));
   children.push(new Table({ width: { size: 10400, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows] }));
@@ -327,6 +334,7 @@ export async function generateUnifiedReport(reportData) {
       spacing: { after: 300 },
       children: [new TextRun({ text: d.dateLabel || '', italics: true, size: 22, font: FONT })],
     }),
+    ...(d.introduction ? [subLabel('Introduction'), bodyText(d.introduction)] : []),
   ];
 
   const scSection = buildSupportClientSection(d.supportClient || { hasData: false });
@@ -338,6 +346,8 @@ export async function generateUnifiedReport(reportData) {
   numeral += 1;
 
   const opSection = buildOperateurSection(d.operateurSaisie || { hasData: false }, toRoman(numeral));
+  opSection.push(subLabel('Problèmes Techniques Constatés'));
+  opSection.push(multilineBody(d.problemesTechniques || ''));
 
   const doc = new Document({
     styles: {
