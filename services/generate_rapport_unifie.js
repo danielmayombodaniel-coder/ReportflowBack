@@ -271,11 +271,11 @@ function buildControleurSection(ctrl, numeral) {
       headerCell("Assignés", cols[2]),
       headerCell("Contrôlés", cols[3]),
       headerCell("En attente", cols[4]),
-      headerCell("ETA antérieure", cols[5]),
-      headerCell("Sans n° déclaration", cols[6]),
-      headerCell("Sans pièces jointes", cols[7]),
-      headerCell("Validés", cols[8]),
-      headerCell("Observations", cols[9]),
+    //  headerCell("ETA antérieure", cols[5]),
+    //  headerCell("Sans n° déclaration", cols[6]),
+    //  headerCell("Sans pièces jointes", cols[7]),
+    //  headerCell("Validés", cols[8]),
+      headerCell("Observations", cols[5]),
     ],
   });
 
@@ -296,11 +296,11 @@ function buildControleurSection(ctrl, numeral) {
       dataCell(a.assignes, cols[2], { center: true }),
       dataCell(a.controles, cols[3], { center: true }),
       dataCell(a.enAttente, cols[4], { center: true }),
-      dataCell(a.etaAnterieure, cols[5], { center: true }),
+      /*dataCell(a.etaAnterieure, cols[5], { center: true }),
       dataCell(a.sansDeclaration, cols[6], { center: true }),
       dataCell(a.sansPieces, cols[7], { center: true }),
-      dataCell(a.valides, cols[8], { center: true }),
-      dataCell([multilineBody(a.observation || "")], cols[9]),
+      dataCell(a.valides, cols[8], { center: true }),*/
+      dataCell([multilineBody(a.observation || "")], cols[5]),
     ],
   }));
 
@@ -311,11 +311,11 @@ function buildControleurSection(ctrl, numeral) {
       dataCell(totals.assignes, cols[2], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
       dataCell(totals.controles, cols[3], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
       dataCell(totals.enAttente, cols[4], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.etaAnterieure, cols[5], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
+     /* dataCell(totals.etaAnterieure, cols[5], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
       dataCell(totals.sansDeclaration, cols[6], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
       dataCell(totals.sansPieces, cols[7], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.valides, cols[8], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell("", cols[9], { fill: COLOR_TOTAL_FILL }),
+      dataCell(totals.valides, cols[8], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),*/
+      dataCell("", cols[5], { fill: COLOR_TOTAL_FILL }),
     ],
   });
 
