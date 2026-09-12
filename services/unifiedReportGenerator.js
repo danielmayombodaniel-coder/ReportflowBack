@@ -334,7 +334,7 @@ export async function generateUnifiedReport(reportData) {
       spacing: { after: 300 },
       children: [new TextRun({ text: d.dateLabel || '', italics: true, size: 22, font: FONT })],
     }),
-    ...(d.introduction ? [subLabel('Introduction'), bodyText(d.introduction)] : []),
+    ...(d.introduction ? [subLabel(' '), bodyText(d.introduction)] : []),
   ];
 
   const scSection = buildSupportClientSection(d.supportClient || { hasData: false });
