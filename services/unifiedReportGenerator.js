@@ -217,19 +217,15 @@ function buildControleurSection(ctrl, numeral) {
     };
   }
 
-  const cols = [750, 1500, 950, 950, 900, 900, 950, 950, 850, 4800]; // somme ~13500 (landscape usable width)
+  // Colonnes modifiées : suppression de la colonne "Heure" (750) et ajustement des autres colonnes
+  const cols = [1500, 950, 950, 900, 4800]; // somme ~9100 (landscape usable width)
   const header = new TableRow({
     children: [
-      headerCell('Heure', cols[0]),
-      headerCell('Nom du contrôleur', cols[1]),
-      headerCell('Assignés', cols[2]),
-      headerCell('Contrôlés', cols[3]),
-      headerCell('En attente', cols[4]),
-    //  headerCell('ETA antérieure', cols[5]),
-    //  headerCell('Sans n° déclaration', cols[6]),
-    //  headerCell('Sans pièces jointes', cols[7]),
-    //  headerCell('Validés', cols[8]),
-      headerCell('Observations', cols[5]),
+      headerCell('Nom du contrôleur', cols[0]),
+      headerCell('Assignés', cols[1]),
+      headerCell('Contrôlés', cols[2]),
+      headerCell('En attente', cols[3]),
+      headerCell('Observations', cols[4]),
     ],
   });
 
@@ -245,38 +241,28 @@ function buildControleurSection(ctrl, numeral) {
 
   const rows = ctrl.agents.map((a) => new TableRow({
     children: [
-      dataCell(a.heure || '--:--', cols[0], { center: true }),
-      dataCell(a.nom, cols[1], { bold: true }),
-      dataCell(a.assignes ?? 0, cols[2], { center: true }),
-      dataCell(a.controles ?? 0, cols[3], { center: true }),
-      dataCell(a.enAttente ?? 0, cols[4], { center: true }),
-     /* dataCell(a.etaAnterieure ?? 0, cols[5], { center: true }),
-      dataCell(a.sansDeclaration ?? 0, cols[6], { center: true }),
-      dataCell(a.sansPieces ?? 0, cols[7], { center: true }),
-      dataCell(a.valides ?? 0, cols[8], { center: true }),*/
-      dataCell([multilineBody(a.observation || '')], cols[5]),
+      dataCell(a.nom, cols[0], { bold: true }),
+      dataCell(a.assignes ?? 0, cols[1], { center: true }),
+      dataCell(a.controles ?? 0, cols[2], { center: true }),
+      dataCell(a.enAttente ?? 0, cols[3], { center: true }),
+      dataCell([multilineBody(a.observation || '')], cols[4]),
     ],
   }));
 
   const totalRow = new TableRow({
     children: [
       dataCell('TOTAL', cols[0], { bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell('', cols[1], { fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.assignes, cols[2], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.controles, cols[3], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.enAttente, cols[4], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      /*dataCell(totals.etaAnterieure, cols[5], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.sansDeclaration, cols[6], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.sansPieces, cols[7], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.valides, cols[8], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),*/
-      dataCell('', cols[5], { fill: COLOR_TOTAL_FILL }),
+      dataCell(totals.assignes, cols[1], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
+      dataCell(totals.controles, cols[2], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
+      dataCell(totals.enAttente, cols[3], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
+      dataCell('', cols[4], { fill: COLOR_TOTAL_FILL }),
     ],
   });
 
   return {
     heading: sectionTitle(numeral, titleText),
     content: [
-      new Table({ width: { size: 13500, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] }),
+      new Table({ width: { size: 9100, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] }),
       subLabel('Observation'),
       multilineBody(ctrl.observationResponsable || ''),
     ],

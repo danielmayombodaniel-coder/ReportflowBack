@@ -140,11 +140,7 @@ function buildControleurData(reports, dailyNotes = {}) {
 
         const observation = observationParts.join('\n');
 
-        // Extraire l'heure de soumission
-        const heure = r.submittedAt ? new Date(r.submittedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--:--';
-
         return {
-            heure,
             nom: r.submittedByName || 'Inconnu',
             assignes: r.dossiersAssignes || 0,
             controles: r.dossiersControles || 0,

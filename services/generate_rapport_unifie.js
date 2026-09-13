@@ -74,19 +74,19 @@ const data = {
   controleur: {
     title: "Contrôleur — Kinshasa",
     agents: [
-      { heure: "15:56", nom: "Elie MUNANGA", assignes: 50, controles: 46, enAttente: 4, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
+      { nom: "Elie MUNANGA", assignes: 50, controles: 46, enAttente: 4, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
         observation: "Observation : comme les jours précédents, un problème de connexion a de nouveau été rencontré, ce qui n'a pas permis au contrôleur de bien évoluer et d'atteindre sa target du jour." },
-      { heure: "16:03", nom: "Eliakim Mokemo", assignes: 50, controles: 50, enAttente: 26, etaAnterieure: 1, sansDeclaration: 0, sansPieces: 0, valides: 0,
+      { nom: "Eliakim Mokemo", assignes: 50, controles: 50, enAttente: 26, etaAnterieure: 1, sansDeclaration: 0, sansPieces: 0, valides: 0,
         observation: "Erreurs fréquentes : problèmes liés au mode de conditionnement (poids BRUT, NET et CBM), à l'identification de la marchandise (HS, IMO, colis, emballage), aux valeurs (Fret, FOB, assurance, Incoterm) et à l'expédition (embarquement, lieu de départ, arrivée, ETA, ETD, transitaire).\nObservation : les agents de Mombassa commettent encore trop d'erreurs dans le conditionnement." },
-      { heure: "16:10", nom: "Daniel LUBANGULA", assignes: 50, controles: 50, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
+      { nom: "Daniel LUBANGULA", assignes: 50, controles: 50, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
         observation: "Observation : au cours de la journée, 50 dossiers ont été contrôlés. Les principales anomalies relevées concernent les erreurs sur les valeurs FOB, FRET et BAF, les factures de fret non jointes, les surcharges non renseignées, ainsi que l'absence ou l'insuffisance de description des marchandises." },
-      { heure: "16:13", nom: "Honoré NGBOTO", assignes: 50, controles: 36, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 1,
+      { nom: "Honoré NGBOTO", assignes: 50, controles: 36, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 1,
         observation: "Saisisseurs / zones : petits correctifs apportés sur les frais additionnels des dossiers saisis par Hans Michaela, Purity MUTHONI et AGINGA Linet.\nErreurs fréquentes : problèmes liés au mode de conditionnement (poids BRUT, NET et CBM) et aux valeurs (Fret, FOB, assurance, Incoterm)." },
-      { heure: "16:30", nom: "ZOLA Glodi", assignes: 50, controles: 35, enAttente: 1, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
+      { nom: "ZOLA Glodi", assignes: 50, controles: 35, enAttente: 1, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 0,
         observation: "Saisisseurs / zones : SHEILLA ARADI — Mombassa ; Purity MUTHONI — Mombassa ; Baartman MJ — Cape Town." },
-      { heure: "16:32", nom: "Nathalis NGOMBO", assignes: 50, controles: 38, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 2,
+      { nom: "Nathalis NGOMBO", assignes: 50, controles: 38, enAttente: 50, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 2,
         observation: "Observation : problème de connexion rencontré. Plusieurs dossiers présentent des saisisseurs qui ne renseignent pas les autres surcharges." },
-      { heure: "17:08", nom: "Holly BOKAMBANDJA", assignes: 50, controles: 50, enAttente: 35, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 4,
+      { nom: "Holly BOKAMBANDJA", assignes: 50, controles: 50, enAttente: 35, etaAnterieure: 0, sansDeclaration: 0, sansPieces: 0, valides: 4,
         observation: "Résumé global : exportateur, frais additionnels, Incoterm, mauvais documents joints dans Synapta, pas de facture de fret dans Sygrem, fret de base, code HS et nom du navire / numéro de voyage." },
     ],
   },
@@ -263,19 +263,15 @@ function buildIndividualSections(rapports, startNumeral) {
 }
 
 function buildControleurSection(ctrl, numeral) {
-  const cols = [750, 1500, 950, 950, 900, 900, 950, 950, 850, 4800]; // somme ~13500, tient dans la largeur landscape utile
+  // Colonnes modifiées : suppression de la colonne "Heure" (750)
+  const cols = [1500, 950, 950, 900, 4800]; // somme ~9100, tient dans la largeur landscape utile
   const header = new TableRow({
     children: [
-      headerCell("Heure", cols[0]),
-      headerCell("Nom du contrôleur", cols[1]),
-      headerCell("Assignés", cols[2]),
-      headerCell("Contrôlés", cols[3]),
-      headerCell("En attente", cols[4]),
-    //  headerCell("ETA antérieure", cols[5]),
-    //  headerCell("Sans n° déclaration", cols[6]),
-    //  headerCell("Sans pièces jointes", cols[7]),
-    //  headerCell("Validés", cols[8]),
-      headerCell("Observations", cols[5]),
+      headerCell("Nom du contrôleur", cols[0]),
+      headerCell("Assignés", cols[1]),
+      headerCell("Contrôlés", cols[2]),
+      headerCell("En attente", cols[3]),
+      headerCell("Observations", cols[4]),
     ],
   });
 
@@ -291,37 +287,27 @@ function buildControleurSection(ctrl, numeral) {
 
   const rows = ctrl.agents.map((a) => new TableRow({
     children: [
-      dataCell(a.heure, cols[0], { center: true }),
-      dataCell(a.nom, cols[1], { bold: true }),
-      dataCell(a.assignes, cols[2], { center: true }),
-      dataCell(a.controles, cols[3], { center: true }),
-      dataCell(a.enAttente, cols[4], { center: true }),
-      /*dataCell(a.etaAnterieure, cols[5], { center: true }),
-      dataCell(a.sansDeclaration, cols[6], { center: true }),
-      dataCell(a.sansPieces, cols[7], { center: true }),
-      dataCell(a.valides, cols[8], { center: true }),*/
-      dataCell([multilineBody(a.observation || "")], cols[5]),
+      dataCell(a.nom, cols[0], { bold: true }),
+      dataCell(a.assignes, cols[1], { center: true }),
+      dataCell(a.controles, cols[2], { center: true }),
+      dataCell(a.enAttente, cols[3], { center: true }),
+      dataCell([multilineBody(a.observation || "")], cols[4]),
     ],
   }));
 
   const totalRow = new TableRow({
     children: [
       dataCell("TOTAL", cols[0], { bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell("", cols[1], { fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.assignes, cols[2], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.controles, cols[3], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.enAttente, cols[4], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-     /* dataCell(totals.etaAnterieure, cols[5], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.sansDeclaration, cols[6], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.sansPieces, cols[7], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
-      dataCell(totals.valides, cols[8], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),*/
-      dataCell("", cols[5], { fill: COLOR_TOTAL_FILL }),
+      dataCell(totals.assignes, cols[1], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
+      dataCell(totals.controles, cols[2], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
+      dataCell(totals.enAttente, cols[3], { center: true, bold: true, fill: COLOR_TOTAL_FILL }),
+      dataCell("", cols[4], { fill: COLOR_TOTAL_FILL }),
     ],
   });
 
   return {
     heading: sectionTitle(numeral, ctrl.title),
-    table: new Table({ width: { size: 13500, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] }),
+    table: new Table({ width: { size: 9100, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] }),
   };
 }
 
