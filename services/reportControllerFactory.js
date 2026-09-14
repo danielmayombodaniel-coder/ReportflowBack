@@ -63,13 +63,10 @@ const findTodayReport = (Model, identity) => Model.findOne({
     reportDate: getTodayReportDate(),
 });
 
-const validateMeaningfulReport = (report, meaningfulFields) => meaningfulFields.some((field) => {
-    const value = report[field];
-    if (typeof value === 'string') return value.trim().length > 0;
-    if (typeof value === 'number') return value > 0;
-    if (Array.isArray(value)) return value.length > 0;
-    return value && Object.values(value).some((item) => item > 0 || (typeof item === 'string' && item.trim()));
-});
+const validateMeaningfulReport = (report, meaningfulFields) => {
+    // Toujours permettre la soumission - même les rapports vides sont acceptés
+    return true;
+};
 
 const defaultReport = (base, identity) => ({
     ...base,
