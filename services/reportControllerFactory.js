@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import { getTodayReportDate } from './reportDateUtils.js';
+import { isAutoValidationEnabled } from './autoValidationService.js';
 import logger from '../utils/logger.js';
 
 const EDITABLE_STATUSES = ['draft', 'needs_correction'];
@@ -81,7 +82,7 @@ const defaultReport = (base, identity) => ({
  * @param {{Model: import('mongoose').Model, schema: import('zod').ZodType, empty: object, meaningfulFields: string[], allowedProfiles: string[]}} options
  * @returns {{getToday: Function, updateToday: Function, submitToday: Function}}
  */
-export const createReportController = ({ Model, schema, empty, meaningfulFields, allowedProfiles }) => ({
+export const createReportController = ({ Model, schema, empty, meaningfulFields, allowedProfiles, service }) => ({
     getToday: async (req, res) => {
         try {
             if (req.user && !allowedProfiles.includes(req.user.profile)) {
@@ -146,6 +147,11 @@ export const createReportController = ({ Model, schema, empty, meaningfulFields,
 
             report.status = 'submitted';
             report.submittedAt = new Date();
+            if (service && await isAutoValidationEnabled(service)) {
+                report.status = 'validated';
+                report.validatedAt = new Date();
+                if (req.user?.userId) report.validatedBy = req.user.userId;
+            }
             await report.save();
             return res.status(200).json({ report });
         } catch (error) {

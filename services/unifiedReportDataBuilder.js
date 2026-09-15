@@ -136,7 +136,7 @@ function buildControleurData(reports, dailyNotes = {}) {
         }
         
         if (r.observations && r.observations.trim()) {
-            observationParts.push(`Observation : ${r.observations.trim()}`);
+            observationParts.push(r.observations.trim());
         }
 
         const observation = observationParts.join('\n');

@@ -13,6 +13,7 @@ const controller = createReportController({
     },
     meaningfulFields: ['dossiersRecus', 'dossiersTraites', 'dossiersRestants', 'observations'],
     allowedProfiles: ['operateur_saisie_agent'],
+    service: 'operateur-saisie',
 });
 
 export const getToday = controller.getToday;

@@ -16,6 +16,7 @@ const controller = createReportController({
     },
     meaningfulFields: ['mails', 'dossiers'],
     allowedProfiles: ['support_client_agent'],
+    service: 'support-client',
 });
 
 export const getToday = controller.getToday;

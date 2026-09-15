@@ -15,6 +15,7 @@ const controller = createReportController({
     },
     meaningfulFields: ['dossiersAssignes', 'dossiersControles', 'dossiersEnAttente', 'observations', 'dataEntryPersons', 'frequentErrors'],
     allowedProfiles: ['controleur_agent'],
+    service: 'controleur',
 });
 
 export const getToday = controller.getToday;
