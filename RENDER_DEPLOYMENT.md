@@ -8,7 +8,9 @@ Le fichier `.env` est maintenant configuré et versionné. Render l'utilisera au
 
 Le backend utilise LibreOffice en mode headless pour convertir le même document DOCX généré en PDF, sans reconstruire sa mise en page. Le fichier `Dockerfile` installe automatiquement LibreOffice.
 
-Dans Render, configurez le service backend avec le runtime **Docker** et le contexte `ReportflowBack`. La route PDF est ensuite disponible via `POST /api/rapport-unifie/pdf`.
+Dans Render, configurez le service backend avec le runtime **Docker** et le contexte `ReportflowBack`. Le fichier `render.yaml` contient cette configuration. La route PDF est ensuite disponible via `POST /api/rapport-unifie/pdf`.
+
+Après le changement de runtime, lancez un déploiement manuel ou poussez le commit. Un ancien service Render configuré en Node.js ne possède pas LibreOffice et renverra une erreur `503`.
 
 ### Variables d'environnement actuelles (.env)
 

@@ -22,7 +22,7 @@ export const convertDocxToPdf = async (docxBuffer) => {
         ], { timeout: 120000 });
         return await fs.readFile(pdfPath);
     } catch (error) {
-        const conversionError = new Error('La conversion PDF est indisponible sur le serveur.');
+        const conversionError = new Error('La conversion PDF est indisponible sur le serveur. Vérifiez que le backend Render utilise le Dockerfile ReportflowBack.');
         conversionError.cause = error;
         conversionError.status = 503;
         throw conversionError;
