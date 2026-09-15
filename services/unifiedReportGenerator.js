@@ -62,6 +62,10 @@ function bodyText(text, opts = {}) {
   });
 }
 
+function hasContent(value) {
+  return value !== null && value !== undefined && String(value).trim().length > 0;
+}
+
 function multilineBody(text) {
   const lines = (text || '').split('\n');
   const runs = [];
@@ -113,10 +117,14 @@ function buildSupportClientSection(sc) {
   const children = [sectionTitle('I', sc.title || 'Support Client - Kinshasa')];
   if (!sc.hasData || !sc.agents || sc.agents.length === 0) {
     children.push(bodyText('Aucune donnée validée pour cette date.'));
-    children.push(subLabel('3. Défis rencontrés'));
-    children.push(multilineBody(sc.defisRencontres || ''));
-    children.push(subLabel('4. Observations'));
-    children.push(multilineBody(sc.observations || ''));
+    if (hasContent(sc.defisRencontres)) {
+      children.push(subLabel('3. Défis rencontrés'));
+      children.push(multilineBody(sc.defisRencontres));
+    }
+    if (hasContent(sc.observations)) {
+      children.push(subLabel('4. Observations'));
+      children.push(multilineBody(sc.observations));
+    }
     return children;
   }
 
@@ -188,17 +196,21 @@ function buildSupportClientSection(sc) {
   );
 
   // Ajouter les nouvelles sous-sections pour le responsable
-  children.push(subLabel('3. Défis rencontrés'));
-  children.push(multilineBody(sc.defisRencontres || ''));
-  children.push(subLabel('4. Observations'));
-  children.push(multilineBody(sc.observations || ''));
+  if (hasContent(sc.defisRencontres)) {
+    children.push(subLabel('3. Défis rencontrés'));
+    children.push(multilineBody(sc.defisRencontres));
+  }
+  if (hasContent(sc.observations)) {
+    children.push(subLabel('4. Observations'));
+    children.push(multilineBody(sc.observations));
+  }
 
   return children;
 }
 
 function buildIndividualSections(rapports, startNumeral) {
   const out = [];
-  (rapports || []).forEach((r, idx) => {
+  (rapports || []).filter((r) => hasContent(r.contenu)).forEach((r, idx) => {
     const numeral = toRoman(startNumeral + idx);
     out.push(sectionTitle(numeral, r.note ? `${r.titre} [${r.note}]` : r.titre));
     out.push(bodyText(r.contenu));
@@ -211,11 +223,10 @@ function buildControleurSection(ctrl, numeral) {
   if (!ctrl.hasData || !ctrl.agents || ctrl.agents.length === 0) {
     return {
       heading: sectionTitle(numeral, titleText),
-      content: [
-        bodyText('Aucune donnée validée pour cette date.'),
-        subLabel('Observation'),
-        multilineBody(ctrl.observationResponsable || ''),
-      ],
+      content: [bodyText('Aucune donnée validée pour cette date.'),
+        ...(hasContent(ctrl.observationResponsable)
+          ? [subLabel('Observation'), multilineBody(ctrl.observationResponsable)]
+          : [])],
     };
   }
 
@@ -265,8 +276,9 @@ function buildControleurSection(ctrl, numeral) {
     heading: sectionTitle(numeral, titleText),
     content: [
       new Table({ width: { size: 14500, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] }),
-      subLabel('Observation'),
-      multilineBody(ctrl.observationResponsable || ''),
+      ...(hasContent(ctrl.observationResponsable)
+        ? [subLabel('Observation'), multilineBody(ctrl.observationResponsable)]
+        : []),
     ],
   };
 }
@@ -334,8 +346,10 @@ export async function generateUnifiedReport(reportData) {
   numeral += 1;
 
   const opSection = buildOperateurSection(d.operateurSaisie || { hasData: false }, toRoman(numeral));
-  opSection.push(subLabel('Problèmes Techniques Constatés'));
-  opSection.push(multilineBody(d.problemesTechniques || ''));
+  if (hasContent(d.problemesTechniques)) {
+    opSection.push(sectionTitle(toRoman(numeral + 1), 'Problèmes Techniques Constatés'));
+    opSection.push(multilineBody(d.problemesTechniques));
+  }
 
   const doc = new Document({
     styles: {
