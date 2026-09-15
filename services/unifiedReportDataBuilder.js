@@ -67,7 +67,8 @@ function buildSupportClientData(reports, dailyNotes = {}) {
         attente: r.mails?.dossiersEnAttenteRegularisation || 0,
         assignes: r.dossiers?.assignes || 0,
         enCours: r.dossiers?.enCours || 0,
-        saisis: r.dossiers?.saisis || 0
+        saisis: r.dossiers?.saisis || 0,
+        observation: r.observations?.trim() || ''
     }));
 
     return {

@@ -120,7 +120,7 @@ function buildSupportClientSection(sc) {
     return children;
   }
 
-  const totalsCols = [2500, 2500, 2500, 2900]; // somme = 10400 (portrait usable width)
+  const totalsCols = [3500, 3500, 3500, 4000]; // somme = 14500 (landscape usable width)
   const totalsHeader = new TableRow({
     children: [
       headerCell('Demandes de Souscription', totalsCols[0]),
@@ -138,9 +138,9 @@ function buildSupportClientSection(sc) {
     ],
   });
 
-  const dossiersCols = [5200, 5200];
+  const dossiersCols = [7200, 7300];
   const dossiersTable = new Table({
-    width: { size: 10400, type: WidthType.DXA },
+    width: { size: 14500, type: WidthType.DXA },
     columnWidths: dossiersCols,
     rows: [
       new TableRow({ children: [headerCell('Dossiers en cours', dossiersCols[0]), headerCell('Dossiers saisis', dossiersCols[1])] }),
@@ -148,7 +148,7 @@ function buildSupportClientSection(sc) {
     ],
   });
 
-  const agentCols = [1400, 1300, 1300, 1300, 1300, 1300, 1300, 1200];
+  const agentCols = [1400, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 3000]; // Ajout de la colonne observations
   const agentHeader = new TableRow({
     children: [
       headerCell('Agent', agentCols[0]),
@@ -159,6 +159,7 @@ function buildSupportClientSection(sc) {
       headerCell('Dossiers Assignés', agentCols[5]),
       headerCell('Dossiers en Cours', agentCols[6]),
       headerCell('Dossiers Saisis / Traités', agentCols[7]),
+      headerCell('Observations', agentCols[8]),
     ],
   });
   const agentRows = (sc.agents || []).map((a, i) => new TableRow({
@@ -171,18 +172,19 @@ function buildSupportClientSection(sc) {
       dataCell(a.assignes ?? 0, agentCols[5], { center: true, fill: i % 2 ? COLOR_BAND_FILL : undefined }),
       dataCell(a.enCours ?? 0, agentCols[6], { center: true, fill: i % 2 ? COLOR_BAND_FILL : undefined }),
       dataCell(a.saisis ?? 0, agentCols[7], { center: true, fill: i % 2 ? COLOR_BAND_FILL : undefined }),
+      dataCell([multilineBody(a.observation || '')], agentCols[8], { fill: i % 2 ? COLOR_BAND_FILL : undefined }),
     ],
   }));
 
   children.push(
     subLabel('1. Mails Reçus'),
     bodyText(`Nombre total de mails reçus : ${sc.mailsTotal ?? 0}`, { bold: true }),
-    new Table({ width: { size: 10400, type: WidthType.DXA }, columnWidths: totalsCols, rows: [totalsHeader, totalsRow] }),
+    new Table({ width: { size: 14500, type: WidthType.DXA }, columnWidths: totalsCols, rows: [totalsHeader, totalsRow] }),
     subLabel('2. Dossiers Assignés'),
     bodyText(`Nombre total de dossiers assignés : ${sc.dossiersAssignesTotal ?? 0}`, { bold: true }),
     dossiersTable,
     subLabel('Détail des activités par Agent :'),
-    new Table({ width: { size: 10400, type: WidthType.DXA }, columnWidths: agentCols, rows: [agentHeader, ...agentRows] }),
+    new Table({ width: { size: 14500, type: WidthType.DXA }, columnWidths: agentCols, rows: [agentHeader, ...agentRows] }),
   );
 
   // Ajouter les nouvelles sous-sections pour le responsable
@@ -218,7 +220,7 @@ function buildControleurSection(ctrl, numeral) {
   }
 
   // Colonnes modifiées : suppression de la colonne "Heure" (750) et ajustement des autres colonnes
-  const cols = [1500, 950, 950, 900, 4800]; // somme ~9100 (landscape usable width)
+  const cols = [2000, 1200, 1200, 1200, 8900]; // somme ~14500 (landscape usable width)
   const header = new TableRow({
     children: [
       headerCell('Nom du contrôleur', cols[0]),
@@ -262,7 +264,7 @@ function buildControleurSection(ctrl, numeral) {
   return {
     heading: sectionTitle(numeral, titleText),
     content: [
-      new Table({ width: { size: 9100, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] }),
+      new Table({ width: { size: 14500, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows, totalRow] }),
       subLabel('Observation'),
       multilineBody(ctrl.observationResponsable || ''),
     ],
@@ -278,7 +280,7 @@ function buildOperateurSection(op, numeral) {
   children.push(subLabel('Activité du jour'));
   children.push(bodyText(`Dossiers reçus : ${op.dossiersRecus ?? 0}  |  Traités : ${op.dossiersTraites ?? 0}  |  Restants : ${op.dossiersRestants ?? 0}`, { bold: true }));
 
-  const cols = [2300, 1800, 1800, 1800, 2700];
+  const cols = [3000, 2500, 2500, 2500, 4000];
   const header = new TableRow({
     children: [headerCell('Agent', cols[0]), headerCell('Dossiers reçus', cols[1]), headerCell('Dossiers traités', cols[2]), headerCell('Dossiers restants', cols[3]), headerCell('Observations', cols[4])],
   });
@@ -291,7 +293,7 @@ function buildOperateurSection(op, numeral) {
       dataCell([multilineBody(a.observation || '')], cols[4], { fill: i % 2 ? COLOR_BAND_FILL : undefined }),
     ],
   }));
-  children.push(new Table({ width: { size: 10400, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows] }));
+  children.push(new Table({ width: { size: 14500, type: WidthType.DXA }, columnWidths: cols, rows: [header, ...rows] }));
   return children;
 }
 
@@ -342,7 +344,12 @@ export async function generateUnifiedReport(reportData) {
     sections: [
       {
         properties: {
-          page: { size: { width: 11906, height: 16838 }, margin: { top: 900, bottom: 900, left: 1000, right: 1000 } },
+          page: {
+            size: {
+              orientation: PageOrientation.LANDSCAPE
+            },
+            margin: { top: 700, bottom: 700, left: 700, right: 700 },
+          },
         },
         footers: {
           default: new Footer({
@@ -357,7 +364,9 @@ export async function generateUnifiedReport(reportData) {
       {
         properties: {
           page: {
-            size: { width: 11906, height: 16838, orientation: PageOrientation.LANDSCAPE },
+            size: {
+              orientation: PageOrientation.LANDSCAPE
+            },
             margin: { top: 700, bottom: 700, left: 700, right: 700 },
           },
         },
@@ -365,7 +374,12 @@ export async function generateUnifiedReport(reportData) {
       },
       {
         properties: {
-          page: { size: { width: 11906, height: 16838 }, margin: { top: 900, bottom: 900, left: 1000, right: 1000 } },
+          page: {
+            size: {
+              orientation: PageOrientation.LANDSCAPE
+            },
+            margin: { top: 700, bottom: 700, left: 700, right: 700 },
+          },
         },
         children: [...opSection],
       },

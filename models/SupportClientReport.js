@@ -20,6 +20,7 @@ const supportClientReportSchema = configureBaseReportSchema(new mongoose.Schema(
         enCours: { type: Number, min: 0, default: 0 },
         saisis: { type: Number, min: 0, default: 0 },
     },
+    observations: { type: String, default: '' },
 }));
 
 const SupportClientReport = mongoose.model(
