@@ -1,5 +1,6 @@
 import { buildReportDataForDate } from '../services/unifiedReportDataBuilder.js';
 import { generateUnifiedReport } from '../services/unifiedReportGenerator.js';
+import { convertDocxToPdf } from '../services/docxToPdf.js';
 
 /**
  * Recalcule les totaux pour un service après filtrage des agents
@@ -36,65 +37,64 @@ function recalculateTotals(data, service) {
  * @param {import('express').Response} res
  * @returns {Promise<void>}
  */
+const buildDocument = async (req) => {
+    const { date } = req.query;
+    const { visibility } = req.body || {};
+    const reportData = await buildReportDataForDate(date);
+
+    if (visibility) {
+        if (visibility.supportClient && Array.isArray(visibility.supportClient) && reportData.supportClient.agents) {
+            reportData.supportClient.agents = reportData.supportClient.agents.filter((_, index) => visibility.supportClient[index] !== false);
+            recalculateTotals(reportData, 'supportClient');
+        }
+        if (visibility.controleur && Array.isArray(visibility.controleur) && reportData.controleur.agents) {
+            reportData.controleur.agents = reportData.controleur.agents.filter((_, index) => visibility.controleur[index] !== false);
+        }
+        if (visibility.operateurSaisie && Array.isArray(visibility.operateurSaisie) && reportData.operateurSaisie.agents) {
+            reportData.operateurSaisie.agents = reportData.operateurSaisie.agents.filter((_, index) => visibility.operateurSaisie[index] !== false);
+            recalculateTotals(reportData, 'operateurSaisie');
+        }
+        if (visibility.rapportsIndividuels && Array.isArray(visibility.rapportsIndividuels) && reportData.rapportsIndividuels) {
+            reportData.rapportsIndividuels = reportData.rapportsIndividuels.filter((_, index) => visibility.rapportsIndividuels[index] !== false);
+        }
+    }
+
+    return {
+        date: date || new Date().toISOString().slice(0, 10),
+        docxBuffer: await generateUnifiedReport(reportData),
+    };
+};
+
 export const generateUnifiedReportForDate = async (req, res) => {
     try {
-        const { date } = req.query;
-        const { visibility } = req.body || {};
-        
-        // Construire les données pour la date demandée
-        const reportData = await buildReportDataForDate(date);
-        
-        // Filtrer les agents selon la visibilité
-        if (visibility) {
-            if (visibility.supportClient && Array.isArray(visibility.supportClient) && reportData.supportClient.agents) {
-                reportData.supportClient.agents = reportData.supportClient.agents.filter((_, index) => 
-                    visibility.supportClient[index] !== false
-                );
-                recalculateTotals(reportData, 'supportClient');
-            }
-            if (visibility.controleur && Array.isArray(visibility.controleur) && reportData.controleur.agents) {
-                reportData.controleur.agents = reportData.controleur.agents.filter((_, index) => 
-                    visibility.controleur[index] !== false
-                );
-            }
-            if (visibility.operateurSaisie && Array.isArray(visibility.operateurSaisie) && reportData.operateurSaisie.agents) {
-                reportData.operateurSaisie.agents = reportData.operateurSaisie.agents.filter((_, index) => 
-                    visibility.operateurSaisie[index] !== false
-                );
-                recalculateTotals(reportData, 'operateurSaisie');
-            }
-            if (visibility.rapportsIndividuels && Array.isArray(visibility.rapportsIndividuels) && reportData.rapportsIndividuels) {
-                reportData.rapportsIndividuels = reportData.rapportsIndividuels.filter((_, index) => 
-                    visibility.rapportsIndividuels[index] !== false
-                );
-            }
-        }
-        
-        // Générer le document Word
-        const docxBuffer = await generateUnifiedReport(reportData);
-        
-        // Formater le nom du fichier avec la date
-        const dateForFilename = date || new Date().toISOString().slice(0, 10);
+        const { date: dateForFilename, docxBuffer } = await buildDocument(req);
         const filename = `rapport-unifie-${dateForFilename}.docx`;
-        
-        // Envoyer le fichier en téléchargement
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
         res.send(docxBuffer);
-        
     } catch (error) {
         console.error('Erreur lors de la génération du rapport unifié:', error);
-        
-        // Gérer les erreurs de validation de date
         if (error.status === 400) {
             return res.status(400).json({ error: error.message });
         }
-        
-        // Gérer les autres erreurs
         res.status(500).json({ 
             error: 'Erreur lors de la génération du rapport unifié',
             message: error.message 
         });
+    }
+};
+
+export const generateUnifiedPdfForDate = async (req, res) => {
+    try {
+        const { date, docxBuffer } = await buildDocument(req);
+        const pdfBuffer = await convertDocxToPdf(docxBuffer);
+        const filename = `rapport-unifie-${date}.pdf`;
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('Erreur lors de la conversion PDF du rapport unifié:', error);
+        res.status(error.status || 500).json({ error: error.message || 'Erreur lors de la conversion PDF' });
     }
 };
 

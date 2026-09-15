@@ -1,5 +1,5 @@
 import express from 'express';
-import { generateUnifiedReportForDate, getUnifiedReportData } from '../controllers/unifiedReportController.js';
+import { generateUnifiedPdfForDate, generateUnifiedReportForDate, getUnifiedReportData } from '../controllers/unifiedReportController.js';
 import { getDailyReportNotes, updateDailyReportNotes } from '../controllers/dailyReportNotesController.js';
 import { optionalAuth } from '../middleware/optionalAuth.js';
 
@@ -14,6 +14,7 @@ const router = express.Router();
  * Accepte un corps JSON avec reportVisibility pour filtrer les rapports individuels
  */
 router.post('/', generateUnifiedReportForDate);
+router.post('/pdf', generateUnifiedPdfForDate);
 
 /**
  * Route PUBLIQUE pour récupérer les données JSON du rapport unifié

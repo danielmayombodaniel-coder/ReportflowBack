@@ -4,6 +4,12 @@
 
 Le fichier `.env` est maintenant configuré et versionné. Render l'utilisera automatiquement lors du déploiement.
 
+### Conversion des rapports en PDF
+
+Le backend utilise LibreOffice en mode headless pour convertir le même document DOCX généré en PDF, sans reconstruire sa mise en page. Le fichier `Dockerfile` installe automatiquement LibreOffice.
+
+Dans Render, configurez le service backend avec le runtime **Docker** et le contexte `ReportflowBack`. La route PDF est ensuite disponible via `POST /api/rapport-unifie/pdf`.
+
 ### Variables d'environnement actuelles (.env)
 
 ```
